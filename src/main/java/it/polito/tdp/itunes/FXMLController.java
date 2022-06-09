@@ -6,6 +6,9 @@ package it.polito.tdp.itunes;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.itunes.model.Arco;
+import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,7 +40,7 @@ public class FXMLController {
     private ComboBox<?> cmbCanzone; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGenere"
-    private ComboBox<?> cmbGenere; // Value injected by FXMLLoader
+    private ComboBox<Genre> cmbGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtMemoria"
     private TextField txtMemoria; // Value injected by FXMLLoader
@@ -52,11 +55,28 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	txtResult.clear();
+    	Genre g= this.cmbGenere.getValue();
+    	if(g==null) {
+    		txtResult.setText("Selezionare un genere musicale");
+    		return;
+    	}
+    	this.model.creaGrafo(g);
+    	txtResult.appendText("Grafo Creato!\n");
+    	txtResult.appendText("Numero vertici : "+this.model.getNumeroVertici()+"\n");
+    	txtResult.appendText("Numero Archi : "+this.model.getNumeroArchi());
     }
 
     @FXML
     void doDeltaMassimo(ActionEvent event) {
+    	txtResult.clear();
+    	if(!this.model.grafoEsistente()) {
+    		txtResult.setText("Bisogna creare prima il grafo");
+    		return;
+    	}
+    	for(Arco a : this.model.getArcoDeltaMassimo()) {
+    		txtResult.appendText(a.toString()+"\n");
+    	}
     	
     	
     }
@@ -75,6 +95,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.cmbGenere.getItems().addAll(this.model.getGeneri());
     }
 
 }
